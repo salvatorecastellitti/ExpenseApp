@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, TextInput } from "react-native";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
 import Button from "../components/UI/Button";
 import { ExpensesContext } from "../store/expenses-context";
+import { storeExpense } from "../utils/http";
 import IconButton from "./../components/UI/IconButton";
 import { GlobalStyles } from "./../constants/styles";
 
@@ -28,11 +29,12 @@ function ManageExpense({ route, navigation }) {
   function cancelhandler() {
     navigation.goBack();
   }
-  function confirmHandler(expenseData) {
+  async function confirmHandler(expenseData) {
     if (isEditing) {
       expensesCtx.updateExpense(editedExpenseId, expenseData);
     } else {
-      expensesCtx.addExpense(expenseData);
+      const id = await storeExpense(expenseData);
+      expensesCtx.addExpense({ ...expenseData, id: id });
     }
     navigation.goBack();
   }
